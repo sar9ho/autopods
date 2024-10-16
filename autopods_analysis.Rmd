@@ -15,15 +15,24 @@ library(dplyr)
 
 ```{r}
 auto <- read_csv("data/autopod_data.csv")
-#remove NAs
+
+#Set hms as numeric 
 auto$hm1 <- as.numeric(as.character(auto$hm1))
 auto$hm2 <- as.numeric(as.character(auto$hm2))
 auto$hm3 <- as.numeric(as.character(auto$hm3))
 auto$hm4 <- as.numeric(as.character(auto$hm4))
 auto$hm5 <- as.numeric(as.character(auto$hm5))
 
+#Set hpps as numeric 
+auto$hpp1 <- as.numeric(as.character(auto$hpp1))
+auto$hpp2 <- as.numeric(as.character(auto$hpp2))
+auto$hpp3 <- as.numeric(as.character(auto$hpp3))
+auto$hpp4 <- as.numeric(as.character(auto$hpp4))
+auto$hpp5 <- as.numeric(as.character(auto$hpp5))
+
+#remove NAs
 autoclean <- auto %>%
-  filter(complete.cases(hm1, hm2, hm3, hm4, hm5))
+  filter(complete.cases(hm1, hm2, hm3, hm4, hm5, hpp1, hpp2, hpp3, hpp4, hpp5))
 
 ```
 
@@ -39,5 +48,18 @@ hm_avg <- autoclean |>
             average_hm5 = mean(hm5, na.rm = TRUE)
             )
 print(hm_avg)
+```
+```{r}
+#avg proximal phalanges for each higher taxa
+
+hpp_avg <- autoclean |>
+  group_by(`Higher taxon`) |>
+  summarize(average_hpp1 = mean(hpp1, na.rm = TRUE),
+            average_hpp2 = mean(hpp2, na.rm = TRUE),
+            average_hpp3 = mean(hpp3, na.rm = TRUE),
+            average_hpp4 = mean(hpp4, na.rm = TRUE),
+            average_hpp5 = mean(hpp5, na.rm = TRUE)
+            )
+print(hpp_avg)
 ```
 
