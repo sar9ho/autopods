@@ -8,9 +8,11 @@ output: html_notebook
 library(tidyverse)
 library(tidymodels)
 library(knitr)
-library(patchwork)
 library(dplyr)
+library(ggplot2)
+library(patchwork)
 
+#baseR
 ```
 
 ```{r}
@@ -29,7 +31,10 @@ auto$hpp2 <- as.numeric(as.character(auto$hpp2))
 auto$hpp3 <- as.numeric(as.character(auto$hpp3))
 auto$hpp4 <- as.numeric(as.character(auto$hpp4))
 auto$hpp5 <- as.numeric(as.character(auto$hpp5))
+```
 
+
+```{r}
 #remove NAs
 autoclean <- auto %>%
   filter(complete.cases(hm1, hm2, hm3, hm4, hm5, hpp1, hpp2, hpp3, hpp4, hpp5))
@@ -61,5 +66,17 @@ hpp_avg <- autoclean |>
             average_hpp5 = mean(hpp5, na.rm = TRUE)
             )
 print(hpp_avg)
+```
+```{r}
+#get total digit lengths 
+
+autoclean$total_digit1 <- autoclean$hm1 + autoclean$hpp1
+autoclean$total_digit2 <- autoclean$hm2 + autoclean$hpp2
+autoclean$total_digit3 <- autoclean$hm3 + autoclean$hpp3
+autoclean$total_digit4 <- autoclean$hm4 + autoclean$hpp4
+autoclean$total_digit5 <- autoclean$hm5 + autoclean$hpp5
+
+head(autoclean)
+
 ```
 
