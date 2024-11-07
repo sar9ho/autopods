@@ -17,7 +17,7 @@ library(corrplot)
 ```
 
 ```{r}
-auto <- read_csv("data/autopod_data.csv")
+auto <- read_csv("data/autodatawg.csv")
 
 #Set hms as numeric 
 auto$hm1 <- as.numeric(as.character(auto$hm1))
@@ -46,7 +46,7 @@ autoclean <- auto %>%
 #avg hand metatarsals for each higher taxa
 
 hm_avg <- autoclean |>
-  group_by(`Higher taxon`) |>
+  group_by(aagroup) |>
   summarize(average_hm1 = mean(hm1, na.rm = TRUE),
             average_hm2 = mean(hm2, na.rm = TRUE),
             average_hm3 = mean(hm3, na.rm = TRUE),
@@ -59,7 +59,7 @@ print(hm_avg)
 #avg proximal phalanges for each higher taxa
 
 hpp_avg <- autoclean |>
-  group_by(`Higher taxon`) |>
+  group_by(aagroup) |>
   summarize(average_hpp1 = mean(hpp1, na.rm = TRUE),
             average_hpp2 = mean(hpp2, na.rm = TRUE),
             average_hpp3 = mean(hpp3, na.rm = TRUE),
@@ -85,7 +85,7 @@ head(autoclean)
 #AVG DIGIT LENGTHS
 
 avg_digit_lengths <- hm_avg |>
-  full_join(hpp_avg, by = "Higher taxon") |>
+  full_join(hpp_avg, by = "aagroup") |>
 
   mutate(
       avg_digit1 = hm_avg$average_hm1 + hpp_avg$average_hpp1,
@@ -94,7 +94,7 @@ avg_digit_lengths <- hm_avg |>
     avg_digit4 = hm_avg$average_hm4 + hpp_avg$average_hpp4,
     avg_digit5 = hm_avg$average_hm5 + hpp_avg$average_hpp5
     ) |>
-    select(`Higher taxon`, avg_digit1, avg_digit2, avg_digit3, avg_digit4, avg_digit5)
+    select(aagroup, avg_digit1, avg_digit2, avg_digit3, avg_digit4, avg_digit5)
 
 avg_digit_lengths
 ```
@@ -164,13 +164,76 @@ pairs <- list(
 )
 
 # Get unique taxa
-unique_taxa <- unique(autoclean$`Higher taxon`)
+unique_taxa <- unique(autoclean$aagroup)
 
 # for each higher taxa 
 for (taxon in unique_taxa) {
   # filter for the current higher taxon
-  taxa_data <- autoclean[autoclean$`Higher taxon` == taxon, ]
+  taxa_data <- autoclean[autoclean$aagroup == taxon, ]
   
+  # going thru each digit pair 
+  for (pair in pairs) {
+    x <- taxa_data[[pair[1]]]
+    y <- taxa_data[[pair[2]]]
+    
+    # get r^2
+    r_squared <- calc_r_squared(x, y)
+    
+    # actual plot
+    p <- ggplot(taxa_data, aes_string(x = pair[1], y = pair[2])) +
+      geom_point(color = "#0096FF", alpha = 0.6, size = 3) +
+      labs(
+        x = pair[1],
+        y = pair[2],
+        title = paste("Biplot of", pair[1], "and", pair[2], "for", taxon),
+        subtitle = paste("R^2 =", round(r_squared, 3))
+      ) +
+      theme_minimal() +
+      facet_wrap(~ `Sex/age`) +
+      theme(
+        plot.title = element_text(size = 12, face = "bold", color = "#0096FF"),
+        plot.subtitle = element_text(size = 10, color = "black"),
+        axis.title.x = element_text(size = 10, face = "bold"),
+        axis.title.y = element_text(size = 10, face = "bold"),
+        panel.background = element_rect(fill = "#FFF1F3"),  
+        panel.grid.major = element_line(color = "white"), 
+        panel.grid.minor = element_line(color = "white")
+      )
+    print(p)
+  }
+}
+
+```
+```{r}
+
+# Function to calculate R^2
+calc_r_squared <- function(x, y) {
+  model <- lm(y ~ x)
+  summary(model)$r.squared
+}
+
+# Create pairs of digit lengths
+pairs <- list(
+  c("total_digit1", "total_digit2"),
+  c("total_digit1", "total_digit3"),
+  c("total_digit1", "total_digit4"),
+  c("total_digit1", "total_digit5"),
+  c("total_digit2", "total_digit3"),
+  c("total_digit2", "total_digit4"),
+  c("total_digit2", "total_digit5"),
+  c("total_digit3", "total_digit4"),
+  c("total_digit3", "total_digit5"),
+  c("total_digit4", "total_digit5")
+)
+
+# Get unique taxa
+unique_taxa <- unique(autoclean$aagroup)
+
+# for each higher taxa 
+for (taxon in unique_taxa) {
+  # filter for the current higher taxon
+  taxa_data <- autoclean[autoclean$aagroup == taxon, ]
+ 
   # going thru each digit pair 
   for (pair in pairs) {
     x <- taxa_data[[pair[1]]]
@@ -200,23 +263,81 @@ for (taxon in unique_taxa) {
       )
     print(p)
   }
-}
 
+}
+ 
 ```
+```{r}
+# Get unique taxa
+unique_taxa <- unique(autoclean$aagroup)
+
+# for each higher taxa 
+for (taxon in unique_taxa) {
+  # filter for the current higher taxon
+  taxa_data <- autoclean[autoclean$aagroup == taxon, ]
+  
+  #empty matrix 
+   r_squared_matrix <- matrix(NA, nrow = 5, ncol = 5)
+    rownames(r_squared_matrix) <- colnames(r_squared_matrix) <- c("total_digit1", "total_digit2", "total_digit3", "total_digit4", "total_digit5")
+    
+ for (pair in pairs) {
+    x <- taxa_data[[pair[1]]]
+    y <- taxa_data[[pair[2]]]
+    
+    # get r^2
+    r_squared <- calc_r_squared(x, y)
+    
+    # Store R^2 in the matrix
+    r_squared_matrix[pair[1], pair[2]] <- r_squared
+    r_squared_matrix[pair[2], pair[1]] <- r_squared
+ }
+      print(paste("R^2 matrix for taxon:", taxon))
+    print(r_squared_matrix)
+    
+    # Plot R^2 matrix as a heatmap
+    corrplot(r_squared_matrix, method = "color", addCoef.col = "black", tl.col = 
+               "black", tl.srt = 45, title = paste("R^2 Matrix for", taxon), mar=c(0,0,1,0))
+  
+}
+  
+```
+1. For lorisiform:
+- 5&2, 1&2, 5&3, 4&2 are least correlated. 
+-  1&4, 3&2, 5&4, 3&4, 5&1 are most correlated 
+
+2. For lemurid: 
+- Everything is pretty correlated --> probably because lemurid represents a large number of the data in its groupings
+- 3&1, 3&2, 3&5 least correlated 
+- 4&3, 4&5 have highest correlation
+- future plan: potentionally split by taxon next
+
+3. For OWM: 
+- 1&3, 1&4, 1&2, 1&5 are least correlated
+- everything else is pretty correlated (higher than .94)
+- Odd pattern? Why are only digits 1 not correlated with anything?
+
+Overall:
+- 4&5, 3&4, 1&5 have highest correlation 
+- 3&5 least correlated 
 
 ```{r}
-unique_taxa <- unique(autoclean$`Higher taxon`)
+unique_taxa <- unique(autoclean$aagroup)
 
 for (taxon in unique_taxa) {
-  taxa_data <- autoclean[autoclean$`Higher taxon` == taxon, ]
-
-  correlation_matrix <- cor(autoclean[, c("total_digit1", "total_digit2", 
+  taxa_data <- autoclean[autoclean$aagroup == taxon, ]
+  if (nrow(taxa_data) > 2 && all(complete.cases(taxa_data[, c("total_digit1", 
+                                                              "total_digit2", 
+                                                              "total_digit3", 
+                                                              "total_digit4", 
+                                                              "total_digit5")]))) {
+  correlation_matrix <- cor(taxa_data[, c("total_digit1", "total_digit2", 
                                           "total_digit3", "total_digit4", 
                                           "total_digit5")])
   print(taxon)
   print(correlation_matrix)
   corrplot(correlation_matrix, method = "color", addCoef.col = "black", tl.col = 
              "black", tl.srt = 45,   title=taxon,    mar=c(0,0,1,0) )
+  }
 }
 ```
 ```{r}
