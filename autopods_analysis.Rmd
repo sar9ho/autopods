@@ -17,7 +17,7 @@ library(corrplot)
 ```
 
 ```{r}
-auto <- read_csv("data/autodatawg.csv")
+auto <- read_csv("data/datagenu.csv")
 
 #Set hms as numeric 
 auto$hm1 <- as.numeric(as.character(auto$hm1))
@@ -104,201 +104,205 @@ avg_digit_lengths
 # BIPLOTS FOR ALL DIGITS IN DATASET 
 
 #to calc rsquared 
-r_squared <- function(x, y) {
-  model <- lm(y ~ x)
-  summary(model)$r.squared
-}
-
-pairs <- list(
-  c("total_digit1", "total_digit2"),
-  c("total_digit1", "total_digit3"),
-  c("total_digit1", "total_digit4"),
-  c("total_digit1", "total_digit5"),
-  c("total_digit2", "total_digit3"),
-  c("total_digit2", "total_digit4"),
-  c("total_digit2", "total_digit5"),
-  c("total_digit3", "total_digit4"),
-  c("total_digit3", "total_digit5"),
-  c("total_digit4", "total_digit5")
-)
-
-for (pair in pairs) {
-  x <- autoclean[[pair[1]]]
-  y <- autoclean[[pair[2]]]
-  r_squared <- calculate_r_squared(x, y)
-  p <- ggplot(autoclean, aes_string(x = pair[1], y = pair[2])) +
-    geom_point() +
-    labs(x = pair[1], y = pair[2], title = paste("Biplot of", pair[1], "and", pair[2]), subtitle = paste("R^2 =", r_squared)) +
-    theme_minimal()
-  print(p)
-}
+# r_squared <- function(x, y) {
+#   model <- lm(y ~ x)
+#   summary(model)$r.squared
+# }
+# 
+# pairs <- list(
+#   c("total_digit1", "total_digit2"),
+#   c("total_digit1", "total_digit3"),
+#   c("total_digit1", "total_digit4"),
+#   c("total_digit1", "total_digit5"),
+#   c("total_digit2", "total_digit3"),
+#   c("total_digit2", "total_digit4"),
+#   c("total_digit2", "total_digit5"),
+#   c("total_digit3", "total_digit4"),
+#   c("total_digit3", "total_digit5"),
+#   c("total_digit4", "total_digit5")
+# )
+# 
+# for (pair in pairs) {
+#   x <- autoclean[[pair[1]]]
+#   y <- autoclean[[pair[2]]]
+#   r_squared <- calculate_r_squared(x, y)
+#   p <- ggplot(autoclean, aes_string(x = pair[1], y = pair[2])) +
+#     geom_point() +
+#     labs(x = pair[1], y = pair[2], title = paste("Biplot of", pair[1], "and", pair[2]), subtitle = paste("R^2 =", r_squared)) +
+#     theme_minimal()
+#   print(p)
+# }
 
 ```
 ```{r}
-#CORRELATION MATRIX 
-correlation_matrix <- cor(autoclean[, c("total_digit1", "total_digit2", "total_digit3", "total_digit4", "total_digit5")])
-print(correlation_matrix)
-
-corrplot(correlation_matrix, method = "color", addCoef.col = "black", tl.col = "black", tl.srt = 45)
-```
-```{r}
-
-# Function to calculate R^2
-calc_r_squared <- function(x, y) {
-  model <- lm(y ~ x)
-  summary(model)$r.squared
-}
-
-# Create pairs of digit lengths
-pairs <- list(
-  c("total_digit1", "total_digit2"),
-  c("total_digit1", "total_digit3"),
-  c("total_digit1", "total_digit4"),
-  c("total_digit1", "total_digit5"),
-  c("total_digit2", "total_digit3"),
-  c("total_digit2", "total_digit4"),
-  c("total_digit2", "total_digit5"),
-  c("total_digit3", "total_digit4"),
-  c("total_digit3", "total_digit5"),
-  c("total_digit4", "total_digit5")
-)
-
-# Get unique taxa
-unique_taxa <- unique(autoclean$aagroup)
-
-# for each higher taxa 
-for (taxon in unique_taxa) {
-  # filter for the current higher taxon
-  taxa_data <- autoclean[autoclean$aagroup == taxon, ]
-  
-  # going thru each digit pair 
-  for (pair in pairs) {
-    x <- taxa_data[[pair[1]]]
-    y <- taxa_data[[pair[2]]]
-    
-    # get r^2
-    r_squared <- calc_r_squared(x, y)
-    
-    # actual plot
-    p <- ggplot(taxa_data, aes_string(x = pair[1], y = pair[2])) +
-      geom_point(color = "#0096FF", alpha = 0.6, size = 3) +
-      labs(
-        x = pair[1],
-        y = pair[2],
-        title = paste("Biplot of", pair[1], "and", pair[2], "for", taxon),
-        subtitle = paste("R^2 =", round(r_squared, 3))
-      ) +
-      theme_minimal() +
-      facet_wrap(~ `Sex/age`) +
-      theme(
-        plot.title = element_text(size = 12, face = "bold", color = "#0096FF"),
-        plot.subtitle = element_text(size = 10, color = "black"),
-        axis.title.x = element_text(size = 10, face = "bold"),
-        axis.title.y = element_text(size = 10, face = "bold"),
-        panel.background = element_rect(fill = "#FFF1F3"),  
-        panel.grid.major = element_line(color = "white"), 
-        panel.grid.minor = element_line(color = "white")
-      )
-    print(p)
-  }
-}
-
+# #CORRELATION MATRIX 
+# correlation_matrix <- cor(autoclean[, c("total_digit1", "total_digit2", "total_digit3", "total_digit4", "total_digit5")])
+# print(correlation_matrix)
+# 
+# corrplot(correlation_matrix, method = "color", addCoef.col = "black", tl.col = "black", tl.srt = 45)
 ```
 ```{r}
 
 # Function to calculate R^2
-calc_r_squared <- function(x, y) {
-  model <- lm(y ~ x)
-  summary(model)$r.squared
-}
+# calc_r_squared <- function(x, y) {
+#   model <- lm(y ~ x)
+#   summary(model)$r.squared
+# }
+# 
+# # Create pairs of digit lengths
+# pairs <- list(
+#   c("total_digit1", "total_digit2"),
+#   c("total_digit1", "total_digit3"),
+#   c("total_digit1", "total_digit4"),
+#   c("total_digit1", "total_digit5"),
+#   c("total_digit2", "total_digit3"),
+#   c("total_digit2", "total_digit4"),
+#   c("total_digit2", "total_digit5"),
+#   c("total_digit3", "total_digit4"),
+#   c("total_digit3", "total_digit5"),
+#   c("total_digit4", "total_digit5")
+# )
+# 
+# # Get unique taxa
+# unique_taxa <- unique(autoclean$aagroup)
+# 
+# # for each higher taxa 
+# for (taxon in unique_taxa) {
+#   # filter for the current higher taxon
+#   taxa_data <- autoclean[autoclean$aagroup == taxon, ]
+#   
+#   # going thru each digit pair 
+#   for (pair in pairs) {
+#     x <- taxa_data[[pair[1]]]
+#     y <- taxa_data[[pair[2]]]
+#     
+#     # get r^2
+#     r_squared <- calc_r_squared(x, y)
+#     
+#     # actual plot
+#     p <- ggplot(taxa_data, aes_string(x = pair[1], y = pair[2])) +
+#       geom_point(color = "#0096FF", alpha = 0.6, size = 3) +
+#       labs(
+#         x = pair[1],
+#         y = pair[2],
+#         title = paste("Biplot of", pair[1], "and", pair[2], "for", taxon),
+#         subtitle = paste("R^2 =", round(r_squared, 3))
+#       ) +
+#       theme_minimal() +
+#       facet_wrap(~ `Sex/age`) +
+#       theme(
+#         plot.title = element_text(size = 12, face = "bold", color = "#0096FF"),
+#         plot.subtitle = element_text(size = 10, color = "black"),
+#         axis.title.x = element_text(size = 10, face = "bold"),
+#         axis.title.y = element_text(size = 10, face = "bold"),
+#         panel.background = element_rect(fill = "#FFF1F3"),  
+#         panel.grid.major = element_line(color = "white"), 
+#         panel.grid.minor = element_line(color = "white")
+#       )
+#     print(p)
+#   }
+# }
+
+```
+
+```{r}
+
+# Function to calculate R^2
+#calc_r_squared <- function(x, y) {
+  #model <- lm(y ~ x)
+ # summary(model)$r.squared
+#}
 
 # Create pairs of digit lengths
-pairs <- list(
-  c("total_digit1", "total_digit2"),
-  c("total_digit1", "total_digit3"),
-  c("total_digit1", "total_digit4"),
-  c("total_digit1", "total_digit5"),
-  c("total_digit2", "total_digit3"),
-  c("total_digit2", "total_digit4"),
-  c("total_digit2", "total_digit5"),
-  c("total_digit3", "total_digit4"),
-  c("total_digit3", "total_digit5"),
-  c("total_digit4", "total_digit5")
-)
+#pairs <- list(
+  #c("total_digit1", "total_digit2"),
+  #c("total_digit1", "total_digit3"),
+  #c("total_digit1", "total_digit4"),
+  #c("total_digit1", "total_digit5"),
+  #c("total_digit2", "total_digit3"),
+  #c("total_digit2", "total_digit4"),
+  #c("total_digit2", "total_digit5"),
+  #c("total_digit3", "total_digit4"),
+  #c("total_digit3", "total_digit5"),
+ # c("total_digit4", "total_digit5")
+#)
 
 # Get unique taxa
-unique_taxa <- unique(autoclean$aagroup)
+#unique_taxa <- unique(autoclean$aagroup)
 
 # for each higher taxa 
-for (taxon in unique_taxa) {
+#for (taxon in unique_taxa) {
   # filter for the current higher taxon
-  taxa_data <- autoclean[autoclean$aagroup == taxon, ]
+  #taxa_data <- autoclean[autoclean$aagroup == taxon, ]
  
   # going thru each digit pair 
-  for (pair in pairs) {
-    x <- taxa_data[[pair[1]]]
-    y <- taxa_data[[pair[2]]]
+  #for (pair in pairs) {
+    #x <- taxa_data[[pair[1]]]
+    #y <- taxa_data[[pair[2]]]
     
     # get r^2
-    r_squared <- calc_r_squared(x, y)
+   # r_squared <- calc_r_squared(x, y)
     
     # actual plot
-    p <- ggplot(taxa_data, aes_string(x = pair[1], y = pair[2])) +
-      geom_point(color = "#0096FF", alpha = 0.6, size = 3) +
-      labs(
-        x = pair[1],
-        y = pair[2],
-        title = paste("Biplot of", pair[1], "and", pair[2], "for", taxon),
-        subtitle = paste("R^2 =", round(r_squared, 3))
-      ) +
-      theme_minimal() +
-      theme(
-        plot.title = element_text(size = 12, face = "bold", color = "#0096FF"),
-        plot.subtitle = element_text(size = 10, color = "black"),
-        axis.title.x = element_text(size = 10, face = "bold"),
-        axis.title.y = element_text(size = 10, face = "bold"),
-        panel.background = element_rect(fill = "#FFF1F3"),  
-        panel.grid.major = element_line(color = "white"), 
-        panel.grid.minor = element_line(color = "white")
-      )
-    print(p)
-  }
+  #  p <- ggplot(taxa_data, aes_string(x = pair[1], y = pair[2])) +
+      #geom_point(color = "#0096FF", alpha = 0.6, size = 3) +
+      #labs(
+        #x = pair[1],
+        #y = pair[2],
+        #title = paste("Biplot of", pair[1], "and", pair[2], "for", taxon),
+       # subtitle = paste("R^2 =", round(r_squared, 3))
+      #) +
+      #theme_minimal() +
+      #theme(
+        #plot.title = element_text(size = 12, face = "bold", color = "#0096FF"),
+        #plot.subtitle = element_text(size = 10, color = "black"),
+        #axis.title.x = element_text(size = 10, face = "bold"),
+       # axis.title.y = element_text(size = 10, face = "bold"),
+      #  panel.background = element_rect(fill = "#FFF1F3"),  
+     #   panel.grid.major = element_line(color = "white"), 
+    #    panel.grid.minor = element_line(color = "white")
+   #   )
+  #  print(p)
+ # }
 
-}
+#}
  
 ```
+
 ```{r}
+#CONFUSION MATRICES FOR EACH AAGROUP
+
 # Get unique taxa
-unique_taxa <- unique(autoclean$aagroup)
+#unique_taxa <- unique(autoclean$Taxon)
 
 # for each higher taxa 
-for (taxon in unique_taxa) {
+#for (taxon in unique_taxa) {
   # filter for the current higher taxon
-  taxa_data <- autoclean[autoclean$aagroup == taxon, ]
+ # taxa_data <- autoclean[autoclean$Taxon == taxon, ]
   
   #empty matrix 
-   r_squared_matrix <- matrix(NA, nrow = 5, ncol = 5)
-    rownames(r_squared_matrix) <- colnames(r_squared_matrix) <- c("total_digit1", "total_digit2", "total_digit3", "total_digit4", "total_digit5")
+  # r_squared_matrix <- matrix(NA, nrow = 5, ncol = 5)
+   # rownames(r_squared_matrix) <- colnames(r_squared_matrix) <- c("total_digit1", "total_digit2", "total_digit3", "total_digit4", "total_digit5")
     
- for (pair in pairs) {
-    x <- taxa_data[[pair[1]]]
-    y <- taxa_data[[pair[2]]]
+ #for (pair in pairs) {
+  #  x <- taxa_data[[pair[1]]]
+   # y <- taxa_data[[pair[2]]]
     
     # get r^2
-    r_squared <- calc_r_squared(x, y)
+    #r_squared <- calc_r_squared(x, y)
     
     # Store R^2 in the matrix
-    r_squared_matrix[pair[1], pair[2]] <- r_squared
-    r_squared_matrix[pair[2], pair[1]] <- r_squared
- }
-      print(paste("R^2 matrix for taxon:", taxon))
-    print(r_squared_matrix)
+    #r_squared_matrix[pair[1], pair[2]] <- r_squared
+    #r_squared_matrix[pair[2], pair[1]] <- r_squared
+ #}
+  #    print(paste("R^2 matrix for taxon:", taxon))
+   # print(r_squared_matrix)
     
     # Plot R^2 matrix as a heatmap
-    corrplot(r_squared_matrix, method = "color", addCoef.col = "black", tl.col = 
-               "black", tl.srt = 45, title = paste("R^2 Matrix for", taxon), mar=c(0,0,1,0))
+    #corrplot(r_squared_matrix, method = "color", addCoef.col = "black", tl.col = 
+     #          "black", tl.srt = 45, title = paste("R^2 Matrix for", taxon), mar=c(0,0,1,0))
   
-}
+#}
   
 ```
 1. For lorisiform:
@@ -321,26 +325,359 @@ Overall:
 - 3&5 least correlated 
 
 ```{r}
-unique_taxa <- unique(autoclean$aagroup)
+#unique_taxa <- unique(autoclean$aagroup)
 
-for (taxon in unique_taxa) {
-  taxa_data <- autoclean[autoclean$aagroup == taxon, ]
-  if (nrow(taxa_data) > 2 && all(complete.cases(taxa_data[, c("total_digit1", 
-                                                              "total_digit2", 
-                                                              "total_digit3", 
-                                                              "total_digit4", 
-                                                              "total_digit5")]))) {
-  correlation_matrix <- cor(taxa_data[, c("total_digit1", "total_digit2", 
-                                          "total_digit3", "total_digit4", 
-                                          "total_digit5")])
-  print(taxon)
-  print(correlation_matrix)
-  corrplot(correlation_matrix, method = "color", addCoef.col = "black", tl.col = 
-             "black", tl.srt = 45,   title=taxon,    mar=c(0,0,1,0) )
-  }
-}
+#for (taxon in unique_taxa) {
+ # taxa_data <- autoclean[autoclean$aagroup == taxon, ]
+  #if (nrow(taxa_data) > 2 && all(complete.cases(taxa_data[, c("total_digit1", 
+   #                                                           "total_digit2", 
+    #                                                          "total_digit3", 
+     #                                                         "total_digit4", 
+      #                                                        "total_digit5")]))) {
+  #correlation_matrix <- cor(taxa_data[, c("total_digit1", "total_digit2", 
+   #                                       "total_digit3", "total_digit4", 
+    #                                      "total_digit5")])
+  #print(taxon)
+  #print(correlation_matrix)
+  #corrplot(correlation_matrix, method = "color", addCoef.col = "black", tl.col = 
+   #          "black", tl.srt = 45,   title=taxon,    mar=c(0,0,1,0) )
+  #}
+#}
 ```
+
+
+```{r}
+# autoclean_grouped <- autoclean %>%
+#   group_by(genus) %>%  # Group by Taxon
+#   summarize(
+#     mc_total = sum(hm1, hm2, hm3, hm4, hm5, na.rm = TRUE), # Sum of metacarpals within group
+#     ph_total = sum(hpp1, hpp2, hpp3, hpp4, hpp5, na.rm = TRUE), # Sum of phalanges within group
+#     mc1_sum = sum(hm1, na.rm = TRUE),
+#     mc2_sum = sum(hm2, na.rm = TRUE),
+#     mc3_sum = sum(hm3, na.rm = TRUE),
+#     mc4_sum = sum(hm4, na.rm = TRUE),
+#     mc5_sum = sum(hm5, na.rm = TRUE),
+#     ph1_sum = sum(hpp1, na.rm = TRUE),
+#     ph2_sum = sum(hpp2, na.rm = TRUE),
+#     ph3_sum = sum(hpp3, na.rm = TRUE),
+#     ph4_sum = sum(hpp4, na.rm = TRUE),
+#     ph5_sum = sum(hpp5, na.rm = TRUE),
+#     .groups = "drop" # Prevent warning about grouped data
+#   ) %>%
+#   mutate(
+#     mc_total = ifelse(mc_total == 0, NA, mc_total),  # Handle groups with 0 sum
+#     ph_total = ifelse(ph_total == 0, NA, ph_total)   # Handle groups with 0 sum
+#   )
+# 
+# # Reattach aagroup
+# aagroup_mapping <- autoclean %>%
+#   select(genus, aagroup) %>%
+#   distinct()  # Remove duplicates
+# 
+# autoclean_grouped <- autoclean_grouped %>%
+#   left_join(aagroup_mapping, by = "genus")
+# 
+# head(autoclean_grouped)
+# 
+# # calculate the geomeans for each metacarpal and phalange (group-level)
+# autoclean_grouped <- autoclean_grouped %>%
+#   mutate(
+#     mc1_geomean = mc1_sum / mc_total,
+#     mc2_geomean = mc2_sum / mc_total,
+#     mc3_geomean = mc3_sum / mc_total,
+#     mc4_geomean = mc4_sum / mc_total,
+#     mc5_geomean = mc5_sum / mc_total,
+#     ph1_geomean = ph1_sum / ph_total,
+#     ph2_geomean = ph2_sum / ph_total,
+#     ph3_geomean = ph3_sum / ph_total,
+#     ph4_geomean = ph4_sum / ph_total,
+#     ph5_geomean = ph5_sum / ph_total
+#   )
+# 
+# # the relevant columns
+# autoclean_new <- autoclean_grouped %>%
+#   select(
+#     genus,
+#     aagroup,
+#     mc1_geomean, mc2_geomean, mc3_geomean, mc4_geomean, mc5_geomean,
+#     ph1_geomean, ph2_geomean, ph3_geomean, ph4_geomean, ph5_geomean
+#   )
+# 
+# # save dataset
+# write.csv(autoclean_new, "fin_aageomean.csv", row.names = FALSE)
+# 
+# 
+# getwd()  # Print the working directory where the file is saved
+# print(head(autoclean_new))  # Print the first few rows of the new data
+# 
+
+```
+
+
+```{r}
+install.packages("ggplot")
+install.packages("ggplot2")
+install.packages("ggrepel")  # for better label positioning
+install.packages("magrittr") # package installations are only needed the first time you use it
+install.packages("dplyr")    # alternative installation of the %>%
+```
+
+
+```{r}
+library(ggplot2)
+library(ggrepel)
+library(magrittr) # needs to be run every time you start R and want to use %>%
+library(dplyr)    # alternatively, this also loads %>%
+library(tidyr)
+```
+
+
+
+```{r}
+my_data <- read.csv("data/geocleandd.csv", header = TRUE)
+
+# Replace #DIV/0! with NA
+my_data[my_data == "#DIV/0!"] <- NA
+
+# Convert all columns except for taxonomic info to numeric
+my_data[, 4:ncol(my_data)] <- lapply(my_data[, 4:ncol(my_data)], as.numeric)
+
+# Check for missing values
+summary(my_data)
+
+```
+
 ```{r}
 
+# Load the cleaned dataset
+
+# Load necessary libraries
+if (!require("ggplot2")) install.packages("ggplot2")
+if (!require("ggrepel")) install.packages("ggrepel")
+if (!require("dplyr")) install.packages("dplyr")
+if (!require("tidyr")) install.packages("tidyr")
+
+library(ggplot2)
+library(ggrepel)
+library(dplyr)
+library(tidyr)
 ```
+
+```{r}
+
+##############################
+# Run PCA
+##############################
+
+# Ensure genus and aagroup columns are intact
+genus_column <- my_data$genus
+aagroup_column <- my_data$aagroup
+
+# Select numeric geomean columns for PCA
+numeric_data <- my_data %>%
+  select(mc1_geo, mc2_geo, mc3_geo, mc4_geo, mc5_geo,
+         mPP1.mIP1_geo, mPP2.mIP2_geo, mPP3.mIP3_geo, mPP4.mIP4_geo, mPP5.mIP5_geo)
+
+# Retain row indices and remove rows with NA values
+numeric_data_clean <- numeric_data %>% na.omit()
+clean_indices <- rownames(numeric_data_clean)
+
+# Perform PCA
+pca_result <- prcomp(numeric_data_clean, center = TRUE, scale. = TRUE)
+
+# Align taxonomic information with PCA results
+pca_data <- data.frame(
+  PC1 = pca_result$x[, 1],
+  PC2 = pca_result$x[, 2],
+  genus = genus_column[rownames(my_data) %in% clean_indices],
+  aagroup = aagroup_column[rownames(my_data) %in% clean_indices]
+)
+
+# Check PCA data
+head(pca_data)
+print(unique(pca_data$genus))  # Should show genera present in the cleaned dataset
+
+# View PCA loadings
+pca_loadings <- pca_result$rotation
+
+##############################
+# Visualize PCA Results
+##############################
+
+# Create hulls for taxonomic groups
+hull_data <- pca_data %>%
+  group_by(genus) %>%
+  slice(chull(PC1, PC2))  # Convex hull for each group
+
+# Create a biplot
+library(ggplot2)
+library(ggrepel)
+
+biplot <- ggplot(pca_data, aes(x = PC1, y = PC2, color = genus)) +
+  geom_polygon(data = hull_data, alpha = 0.3, aes(group = genus), show.legend = FALSE) +
+  geom_point(size = 3, alpha = 0.8) +
+  geom_text_repel(aes(label = genus), size = 3, max.overlaps = Inf) +
+  labs(title = "PCA Biplot with Geomeans",
+       x = "Principal Component 1",
+       y = "Principal Component 2") +
+  theme_minimal()
+
+# Print the plot
+print(biplot)
+
+##############################
+# Analyze PCA Loadings
+##############################
+
+# Print loadings sorted by variance contribution
+loadings_variation <- as.data.frame(pca_loadings) %>%
+  mutate(Variance = rowSums(pca_loadings^2)) %>%
+  arrange(desc(Variance))
+
+print("Loadings Sorted by Variance Contribution:")
+print(loadings_variation)
+
+# Visualize PCA loadings
+plot_pca_loadings <- function(loadings_df, pc_number) {
+  ggplot(loadings_df, aes_string(x = "rownames(loadings_df)", y = paste0("PC", pc_number))) +
+    geom_bar(stat = "identity", fill = "steelblue") +
+    coord_flip() +
+    labs(title = paste("PCA Loadings for PC", pc_number),
+         x = "Variables",
+         y = "Loadings") +
+    theme_minimal()
+}
+
+# Plot loadings for PC1 and PC2
+plot_pca_loadings(loadings_variation, 1)
+plot_pca_loadings(loadings_variation, 2)
+
+##############################
+# Variance Explained by Each PC
+##############################
+
+# Calculate percent variance explained by each principal component
+percent_variance <- (pca_result$sdev^2 / sum(pca_result$sdev^2)) * 100
+
+# Create a variance data frame
+variance_df <- data.frame(
+  Principal_Component = paste0("PC", 1:length(percent_variance)),
+  Percent_Variance = round(percent_variance, 2)
+)
+
+print("Percent Variance Explained:")
+print(variance_df)
+
+
+```
+
+
+
+
+```{r}
+##############################
+# Run PCA
+##############################
+
+# Ensure genus and aagroup columns are intact
+genus_column <- my_data$genus
+aagroup_column <- my_data$aagroup
+
+# Select numeric geomean columns for PCA
+numeric_data <- my_data %>%
+  select(mc1_geo, mc2_geo, mc3_geo, mc4_geo, mc5_geo,
+         mPP1.mIP1_geo, mPP2.mIP2_geo, mPP3.mIP3_geo, mPP4.mIP4_geo, mPP5.mIP5_geo)
+
+# Retain row indices and remove rows with NA values
+numeric_data_clean <- numeric_data %>% na.omit()
+clean_indices <- rownames(numeric_data_clean)
+
+# Perform PCA
+pca_result <- prcomp(numeric_data_clean, center = TRUE, scale. = TRUE)
+
+# Align taxonomic information with PCA results
+pca_data <- data.frame(
+  PC1 = pca_result$x[, 1],
+  PC2 = pca_result$x[, 2],
+  aagroup = aagroup_column[rownames(my_data) %in% clean_indices]  # Align using cleaned indices
+)
+
+# Check PCA data
+head(pca_data)
+print(unique(pca_data$aagroup))  # Should show the aagroups present in the cleaned dataset
+
+# View PCA loadings
+pca_loadings <- pca_result$rotation
+
+##############################
+# Visualize PCA Results
+##############################
+
+# Create hulls for taxonomic groups (grouped by aagroup)
+hull_data <- pca_data %>%
+  group_by(aagroup) %>%
+  slice(chull(PC1, PC2))  # Convex hull for each group
+
+# Create a biplot grouped by aagroup
+library(ggplot2)
+library(ggrepel)
+
+biplot <- ggplot(pca_data, aes(x = PC1, y = PC2, color = aagroup)) +
+  geom_polygon(data = hull_data, alpha = 0.3, aes(group = aagroup), show.legend = FALSE) +
+  geom_point(size = 3, alpha = 0.8) +
+  geom_text_repel(aes(label = aagroup), size = 3, max.overlaps = Inf) +
+  labs(title = "PCA Biplot Grouped by Aagroup",
+       x = "Principal Component 1",
+       y = "Principal Component 2") +
+  theme_minimal()
+
+# Print the plot
+print(biplot)
+
+##############################
+# Analyze PCA Loadings
+##############################
+
+# Print loadings sorted by variance contribution
+loadings_variation <- as.data.frame(pca_loadings) %>%
+  mutate(Variance = rowSums(pca_loadings^2)) %>%
+  arrange(desc(Variance))
+
+print("Loadings Sorted by Variance Contribution:")
+print(loadings_variation)
+
+# Visualize PCA loadings
+plot_pca_loadings <- function(loadings_df, pc_number) {
+  ggplot(loadings_df, aes_string(x = "rownames(loadings_df)", y = paste0("PC", pc_number))) +
+    geom_bar(stat = "identity", fill = "steelblue") +
+    coord_flip() +
+    labs(title = paste("PCA Loadings for PC", pc_number),
+         x = "Variables",
+         y = "Loadings") +
+    theme_minimal()
+}
+
+# Plot loadings for PC1 and PC2
+plot_pca_loadings(loadings_variation, 1)
+plot_pca_loadings(loadings_variation, 2)
+
+##############################
+# Variance Explained by Each PC
+##############################
+
+# Calculate percent variance explained by each principal component
+percent_variance <- (pca_result$sdev^2 / sum(pca_result$sdev^2)) * 100
+
+# Create a variance data frame
+variance_df <- data.frame(
+  Principal_Component = paste0("PC", 1:length(percent_variance)),
+  Percent_Variance = round(percent_variance, 2)
+)
+
+print("Percent Variance Explained:")
+print(variance_df)
+
+```
+
+
 
